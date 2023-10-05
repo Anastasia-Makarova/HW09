@@ -5,40 +5,49 @@ def deco_error(func):
         except IndexError:
             return "Not enough params"
         except KeyError:
-            print(f"There is no contact named {name} in phone book. Please, try again")
+            return f"There is no contact named {name} in phone book. Please, try again"
         except ValueError:
+            return "Not enough params"
+        except TypeError:
             return "Not enough params"
     return inner
 
 
 @deco_error
 def add_func(name, phone):
-    dct = {}
-    dct[name] = phone
-    # print(f"User {name} is added to the phone book with phone number {phone}")
-    return dct
+    phone_book[name] = phone
+    
+    return f"User {name} is added to the phone book with phone number {phone}"
 
 
 @deco_error
-def change_func(*args):  
-    name = args[1]
-    phone = args[2]
-    dct = {}
-    dct[name] = phone
-    # print(f"Phone number for user {name} has been changed to {phone}")
-    return dct
+def change_func(name, phone):  
+    user = phone_book[name]
+    if user: 
+        phone_book[name] = phone
+        return f"Phone number for user {name} has been changed to {phone}"
 
 
+@deco_error
 def hello_func():
     return "How can I help you?"
 
-def search_func():
-    return 5
 
+@deco_error
+def search_func(name):
+    user = phone_book[name]
+    if user: 
+        phone_number = phone_book.get(name)
+        return f"The phone number of user {name} is {phone_number}"
+    
+
+@deco_error
 def show_func():
     return phone_book
 
-def parser(user_input):
+
+@deco_error
+def parser(user_input: str):
     if user_input.lower() == "hello":
         command = "hello"
         arguments = {}
@@ -62,43 +71,23 @@ def parser(user_input):
     else:
         print("Wrong command. Try again")
 
-    return commands[command], arguments
+    return COMMANDS[command], arguments
 
 
-
-
-def main(phone_book: dict):
-
-
+def main():
     while True:
         user_input = input(">>>: ")
        
         if user_input.lower() == "exit" or user_input.lower() == "close" or user_input.lower() == "good bye":
             print ("Good bye!")
             break
-        else:
 
+        else:
             handler, arguments = parser(user_input)
             print(handler(**arguments))
 
-        #     if user_input.lower() == "hello":
-        #         print ("How can I help you?")
-
-        #     elif user_input.lower() =="show all":
-        #         print(phone_book) 
-                
-        #     elif user_input.lower().startswith("add"):
-        #         phone_book.update(add(*user_input.split()))
-
-        #     elif user_input.startswith("change"):
-        #         phone_book.update(change(*user_input.split()))
-
-        #     elif user_input.startswith("phone"):
-        #         null
-        #     else:
-        #         print("Wrong command. Try again")
            
-commands = {
+COMMANDS = {
     "hello": hello_func,
     "add": add_func,
     "change": change_func,
@@ -109,4 +98,4 @@ commands = {
 
 phone_book = {}              
 
-main(phone_book)
+main()
