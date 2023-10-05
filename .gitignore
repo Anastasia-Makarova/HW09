@@ -1,4 +1,5 @@
 test.py
+main_before_deco.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
